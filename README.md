@@ -22,7 +22,7 @@ A professional-grade Layer 7 Load Balancer built with **Python (FastAPI)** and *
 
 ### 1. Installation
 ```bash
-git clone https://github.com/YOUR_USERNAME/python-loadbalancer.git
+git clone https://github.com/sahilgohil/python-loadbalancer.git
 cd python-loadbalancer
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
