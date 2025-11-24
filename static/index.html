@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Balancer Dashboard</title>
+    <style>
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; padding: 20px; }
+        h1 { border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .container { display: flex; gap: 20px; }
+        .controls { width: 30%; background: #161b22; padding: 20px; border-radius: 8px; border: 1px solid #30363d; }
+        .logs { width: 70%; background: #000; padding: 20px; border-radius: 8px; border: 1px solid #30363d; height: 400px; overflow-y: scroll; }
+        button { display: block; width: 100%; padding: 10px; margin-bottom: 10px; background: #238636; color: white; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        button:hover { background: #2ea043; }
+        button.danger { background: #da3633; }
+        button.danger:hover { background: #f85149; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        .server-5001 { color: #58a6ff; }
+        .server-5002 { color: #f2cc60; }
+        .server-5003 { color: #56d364; }
+        .error { color: #ff7b72; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Load Balancer Control Deck</h1>
+
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="controls">
+            <h3>Simulate Traffic</h3>
+            <button onclick="sendRequest('')">Send Normal Request</button>
+            <button onclick="sendRequest('chat')">Send Chat Request</button>
+            <button onclick="sendRequest('payment')">Send Payment Request</button>
+            
+            <h3>Stress Test</h3>
+            <button class="danger" onclick="spamRequests()">🔥 Spam 10 Requests</button>
+        </div>
+
+        <!-- Live Logs -->
+        <div class="logs" id="log-window">
+            <div>Waiting for traffic...</div>
+        </div>
+    </div>
+
+    <script>
+        const logWindow = document.getElementById('log-window');
+
+        async function sendRequest(path) {
+            try {
+                // Fetch from our own backend
+                const response = await fetch('/' + path);
+                const text = await response.text();
+                
+                // Color code based on which server answered
+                let colorClass = "white";
+                if (text.includes("5001")) colorClass = "server-5001";
+                if (text.includes("5002")) colorClass = "server-5002";
+                if (text.includes("5003")) colorClass = "server-5003";
+
+                addLog(text, colorClass);
+
+                if (!response.ok) {
+                    addLog(`Error: ${response.status}`, "error");
+                }
+
+            } catch (err) {
+                addLog("Network Error - Is the LB running?", "error");
+            }
+        }
+
+        async function spamRequests() {
+            for(let i=0; i<10; i++) {
+                sendRequest('');
+                // Small delay so we can see it happening
+                await new Promise(r => setTimeout(r, 200)); 
+            }
+        }
+
+        function addLog(message, colorClass) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${colorClass}`;
+            
+            // Add timestamp
+            const time = new Date().toLocaleTimeString();
+            entry.innerText = `[${time}] ${message}`;
+            
+            logWindow.prepend(entry);
+        }
+    </script>
+</body>
+</html>

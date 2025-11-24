@@ -10,6 +10,14 @@ def hello():
 
     return f'Hello from server running from {port}'
 
+@app.route('/chat')
+def chat():
+    return f'This is the chat service running on port {port}'
+
+@app.route('/payment')
+def payment():
+    return f'This is the payment service running on port {port}'
+
 if __name__ == '__main__':
     # check if the user has provided a port number
     if len(sys.argv) < 2:
